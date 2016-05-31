@@ -10,6 +10,9 @@ var createBrowserHistory = require('history/lib/createBrowserHistory');
 
 var h = require('./helpers')
 
+var Rebase = require('re-base')
+var base = Rebase.createClass('https://blazing-fire-4370.firebaseio.com/')
+
 /*
   App
 */
@@ -20,6 +23,13 @@ var App = React.createClass({
       fishes : {},
       order : {}
     }
+  },
+  componentDidMount : function() {
+    // /* This is where ajax calls would be made */
+    base.syncState(this.props.params.storeId + '/fishes', {
+      context : this,
+      state : 'fishes'
+    });
   },
   addToOrder : function(key) {
     this.state.order[key] = this.state.order[key] + 1 || 1;
@@ -149,7 +159,7 @@ var Header = React.createClass({
 */
 
 var Order = React.createClass({
-  renerOrder : function(key) {
+  renderOrder : function(key) {
     var fish = this.props.fishes[key];
     var count = this.props.order[key];
     if(!fish) {
@@ -179,7 +189,7 @@ var Order = React.createClass({
       <div className="order-wrap">
         <h2 className="order-title">Your Order</h2>
         <ul className="order">
-          {OrderIds.map(this.renderOrder)}
+          {orderIds.map(this.renderOrder)}
           <li className="total">
             <strong>Total:</strong>
             {h.formatPrice(total)}
